@@ -7,8 +7,11 @@ MOVEMENT_SPEED = 5
 
 SPRITE_SCALING_PLAYER = 0.5
 SPRITE_SCALING_COIN = 0.5
-SPRITE_SCALING_LASER = 0.8
-COIN_COUNT = 10
+COIN_COUNT = 80
+
+def coinspeed()
+    if score =+ 1
+        f
 
 class Player(arcade.Sprite):
 
@@ -48,6 +51,7 @@ class MyGame(arcade.Window):
         self.bullet_list = None
         self.player_sprite = None
         self.score = 0
+        self.lives = 3
         self.set_mouse_visible(False)
         arcade.set_background_color(arcade.color.BLUE_GRAY)
 
@@ -57,6 +61,7 @@ class MyGame(arcade.Window):
         self.bullet_list = arcade.SpriteList()
 
         self.score = 0
+        self.lives = 3
 
         self.player_sprite = Player("hughby.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = 50
@@ -67,7 +72,7 @@ class MyGame(arcade.Window):
             coin = Coin("gobbo.png", SPRITE_SCALING_COIN)
 
             coin.center_x = random.randrange(SCREEN_WIDTH)
-            coin.center_y = random.randrange(SCREEN_HEIGHT)
+            coin.center_y = random.randrange(400, 5000)
 
             self.coin_list.append(coin)
 
@@ -78,6 +83,8 @@ class MyGame(arcade.Window):
         self.bullet_list.draw()
 
         output = f"Score: {self.score}"
+        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+        output = f"Lives: {self.lives}"
         arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
 
    # def on_key_press(self, x, y, button, modifiers):
@@ -108,28 +115,17 @@ class MyGame(arcade.Window):
            self.player_sprite.change_y = 0
 
     def update(self, delta_time):
+        global gdfgfgdfg
+
         self.bullet_list.update()
         self.coin_list.update()
         self.player_list.update()
+        #gdfgfgdfg = 
         
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
         for coin in coins_hit_list:
             coin.remove_from_sprite_lists()
             self.score += 1
-
-        #for coin in coins_hit_list:
-        #    coin.reset_pos()
-         #   self.score += 1
-          #  self.angle += 1
-        
-      #  for bullet in self.bullet_list:
-       #     hit_list = arcade.check_for_collision_with_list(bullet, self.coin_list)
-        #    if len(hit_list) > 0:
-         #       bullet.remove_from_sprite_lists()
-          #  for coin in hit_list:
-           #     coin.remove_from_sprite_lists()
-            #    self.score += 1
-             #   bullet.remove_from_sprite_lists()
 
 def main():
     window = MyGame()
