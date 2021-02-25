@@ -1,17 +1,19 @@
 import arcade
 import random
 
-SCREEN_WIDTH = 400
-SCREEN_HEIGHT = 480
-MOVEMENT_SPEED = 5
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 680
+MOVEMENT_SPEED = 7
+COIN_SPEED = 1
 
 SPRITE_SCALING_PLAYER = 0.5
 SPRITE_SCALING_COIN = 0.5
-COIN_COUNT = 80
+COIN_COUNT = 600
 
-def coinspeed()
-    if score =+ 1
-        f
+def write_high_score(result):
+    f = open('highscore.txt','w')  # w : writing mode  /  r : reading mode  /  a  :  appending mode
+    f.write('{}'.format(result))
+    f.close()
 
 class Player(arcade.Sprite):
 
@@ -33,13 +35,14 @@ class Player(arcade.Sprite):
 
 class Coin(arcade.Sprite):
     def reset_pos(self):
-        self.center_y = random.randrange(SCREEN_HEIGHT + 20, SCREEN_HEIGHT + 100)
+        self.center_y = random.randrange(SCREEN_HEIGHT + 20, SCREEN_HEIGHT + 600)
         self.center_x = random.randrange(SCREEN_WIDTH)
     
     def update(self):
-        self.center_y -= 1
+        self.center_y -= COIN_SPEED
         if self.top < 0:
             self.reset_pos()
+            self.lives = self.lives - 1
 
 class MyGame(arcade.Window):
 
@@ -52,6 +55,7 @@ class MyGame(arcade.Window):
         self.player_sprite = None
         self.score = 0
         self.lives = 3
+        self.highscore = 0
         self.set_mouse_visible(False)
         arcade.set_background_color(arcade.color.BLUE_GRAY)
 
@@ -61,11 +65,12 @@ class MyGame(arcade.Window):
         self.bullet_list = arcade.SpriteList()
 
         self.score = 0
-        self.lives = 3
+        self.lives = 10
+        self.highscore = 0
 
         self.player_sprite = Player("hughby.png", SPRITE_SCALING_PLAYER)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 50
+        self.player_sprite.center_x = 200
+        self.player_sprite.center_y = 200
         self.player_list.append(self.player_sprite)
 
         for i in range(COIN_COUNT):
@@ -83,49 +88,54 @@ class MyGame(arcade.Window):
         self.bullet_list.draw()
 
         output = f"Score: {self.score}"
-        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+        arcade.draw_text(output, 400, 20, arcade.color.WHITE, 20)
         output = f"Lives: {self.lives}"
-        arcade.draw_text(output, 10, 20, arcade.color.WHITE, 14)
+        arcade.draw_text(output, 500, 20, arcade.color.WHITE, 20)
 
-   # def on_key_press(self, x, y, button, modifiers):
-#
- #       bullet = arcade.Sprite("laserBlue01.png", SPRITE_SCALING_LASER)
-#
- #       bullet.angle = 90
-#
- #       bullet.center_x = self.player_sprite.center_x
-  #      bullet.bottom = self.player_sprite.top
-#
- #       self.bullet_list.append(bullet)
+        result = self.score
+        write_high_score(result)
 
-    def on_key_press(self, key, modifiers):
-        if key == arcade.key.LEFT:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.player_sprite.change_x = MOVEMENT_SPEED
-        elif key == arcade.key.UP:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.DOWN:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
+        #convert the following three lines to a read_high_score functiom
+        #check that it still works fine!
+        #now, instead of just write_high_score(result), you can put an if statement (to check if the self.score is bigger than the high score that we read)
 
-    def on_key_release(self, key, modifiers):
-       if key == arcade.key.LEFT or key == arcade.key.RIGHT:
-           self.player_sprite.change_x = 0
-       elif key == arcade.key.UP or key == arcade.key.DOWN:
-           self.player_sprite.change_y = 0
+        f = open('highscore.txt', 'r')
+        highscore = f.readline()
+        f.close()
+        output = f"Highscore: {self.highscore}"
+        arcade.draw_text(output, 250, 20, arcade.color.WHITE, 20)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self.player_sprite.center_x = x
+        self.player_sprite.center_y = y
+
+#    def on_key_press(self, key, modifiers):
+ #       if key == arcade.key.LEFT:
+  #          self.player_sprite.change_x = -MOVEMENT_SPEED
+   #     elif key == arcade.key.RIGHT:
+    #        self.player_sprite.change_x = MOVEMENT_SPEED
+     #   elif key == arcade.key.UP:
+      #      self.player_sprite.change_y = MOVEMENT_SPEED
+       # elif key == arcade.key.DOWN:
+        #    self.player_sprite.change_y = -MOVEMENT_SPEED
+
+#    def on_key_release(self, key, modifiers):
+ #      if key == arcade.key.LEFT or key == arcade.key.RIGHT:
+  #         self.player_sprite.change_x = 0
+   #    elif key == arcade.key.UP or key == arcade.key.DOWN:
+    #       self.player_sprite.change_y = 0
 
     def update(self, delta_time):
-        global gdfgfgdfg
-
         self.bullet_list.update()
         self.coin_list.update()
-        self.player_list.update()
-        #gdfgfgdfg = 
+        self.player_list.update() 
         
         coins_hit_list = arcade.check_for_collision_with_list(self.player_sprite, self.coin_list)
         for coin in coins_hit_list:
+            global COIN_SPEED
             coin.remove_from_sprite_lists()
             self.score += 1
+            COIN_SPEED = COIN_SPEED + 0.05
 
 def main():
     window = MyGame()
